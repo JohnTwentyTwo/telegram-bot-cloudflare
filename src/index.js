@@ -33,7 +33,35 @@ export default {
 
                     // Xử lý các lệnh
                     if (text === '/start') {
-                        await sendReply('Xin chào! Tôi là bot theo dõi App Store.\n\nGõ /subscribe để nhận thông báo cập nhật.\nGõ /unsubscribe để huỷ đăng ký.');
+                        await sendReply('Xin chào! Tôi là bot theo dõi App Store.\n\nGõ /subscribe để nhận thông báo cập nhật.\nGõ /unsubscribe để huỷ đăng ký.\nGõ /check để chủ động kiểm tra thông tin ứng dụng ngay lập tức.');
+                    } else if (text === '/check') {
+                        // Tính năng chủ động kiểm tra
+                        const appId = env.APP_ID;
+                        if (!appId) {
+                            await sendReply('Chưa cấu hình APP_ID để theo dõi.');
+                            return new Response('OK', { status: 200 });
+                        }
+
+                        try {
+                            const appleApiUrl = `https://itunes.apple.com/lookup?id=${appId}`;
+                            const response = await fetch(appleApiUrl);
+                            const data = await response.json();
+
+                            if (data.resultCount === 0) {
+                                await sendReply(`Không tìm thấy App với ID ${appId} trên App Store.`);
+                            } else {
+                                const appInfo = data.results[0];
+                                const replyMsg = `🔍 **Thông tin mới nhất từ App Store**\n\n` +
+                                    `📱 Tên: **${appInfo.trackName}**\n` +
+                                    `🆙 Phiên bản: ${appInfo.version}\n` +
+                                    `📅 Ngày phát hành: ${new Date(appInfo.releaseDate).toLocaleDateString()}\n\n` +
+                                    `📝 Ghi chú mới: ${appInfo.releaseNotes || 'Trống'}`;
+                                await sendReply(replyMsg);
+                            }
+                        } catch (err) {
+                            await sendReply('❌ Có lỗi xảy ra khi kiểm tra dữ liệu từ Apple. Vui lòng thử lại sau.');
+                            console.error("Check Error:", err);
+                        }
                     } else if (text === '/subscribe') {
                         if (!subscribers.includes(chatId)) {
                             subscribers.push(chatId);
