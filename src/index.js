@@ -58,7 +58,8 @@ export default {
                 return new Response('OK', { status: 200 });
             } catch (e) {
                 console.error(e);
-                return new Response('Error processing update', { status: 500 });
+                // Gửi lỗi chi tiết về lại cho dễ debug
+                return new Response(`Error processing update: ${e.message}\nStack: ${e.stack}`, { status: 500 });
             }
         }
 
