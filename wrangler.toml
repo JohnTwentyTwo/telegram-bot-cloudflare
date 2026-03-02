@@ -1,0 +1,19 @@
+name = "telegram-bot"
+main = "src/index.js"
+compatibility_date = "2024-03-02"
+
+# Các biến môi trường (Secrets) không nên ghi trực tiếp vào đây
+# Bạn sẽ cần thiết lập SECRET_TELEGRAM_BOT_TOKEN bằng lệnh:
+# npx wrangler secret put SECRET_TELEGRAM_BOT_TOKEN
+
+[vars]
+# ID của App trên App Store. Thay đổi ID này thành ID của App bạn muốn theo dõi.
+# Ví dụ: Trump Billionaires Club là 6742712121
+APP_ID = "6742712121"
+
+[[kv_namespaces]]
+binding = "BOT_DATA"
+id = "SUBSCRIBE_ID_GOES_HERE" # Bạn cần chạy lệnh để tạo KV và lấy ID này
+
+[triggers]
+crons = ["0 * * * *"] # Chạy mỗi giờ một lần vào phút thứ 0
