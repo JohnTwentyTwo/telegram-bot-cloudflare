@@ -13,7 +13,7 @@ APP_ID = "6742712121"
 
 [[kv_namespaces]]
 binding = "BOT_DATA"
-id = "4c7fefc345684aa8a5ffe6ba94ba617c" # ID đã cấu hình tự động
+id = "6e462cd67a3f4d519915249e03de5654" # ID đã cấu hình tự động 
 
 [triggers]
 crons = ["0 * * * *"] # Chạy mỗi giờ một lần vào phút thứ 0
