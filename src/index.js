@@ -9,8 +9,8 @@ export default {
                     const chatId = update.message.chat.id;
                     const text = update.message.text;
 
-                    // Lấy token từ biến môi trường của Cloudflare
-                    const botToken = env.SECRET_TELEGRAM_BOT_TOKEN;
+                    // Lấy token
+                    const botToken = "8579597482:AAH214Cf1IbHUoSZsnpoMYnXjntyvTBfeiM";
                     if (!botToken) {
                         return new Response("Bot token chưa được cấu hình", { status: 500 });
                     }
@@ -98,8 +98,8 @@ export default {
     async scheduled(event, env, ctx) {
         console.log("Running scheduled App Store check...");
 
-        // Lấy token và APP_ID từ môi trường
-        const botToken = env.SECRET_TELEGRAM_BOT_TOKEN;
+        // Lấy token và APP_ID
+        const botToken = "8579597482:AAH214Cf1IbHUoSZsnpoMYnXjntyvTBfeiM";
         const appId = env.APP_ID;
 
         if (!botToken || !appId) {
