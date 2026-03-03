@@ -146,8 +146,22 @@ export default {
                     notificationMessage = `🔔 **Cập Nhật Ứng Dụng Mới!** 🔔\n\n` +
                         `📱 Tên: **${currentState.trackName}**\n` +
                         `🆙 Phiên bản: ${currentState.version} (Trước đó: ${previousState.version})\n` +
-                        `📅 Ngày phát hành: ${new Date(currentState.releaseDate).toLocaleDateString()}\n\n` +
+                        `📅 Ngày phát hành: ${new Date(currentState.releaseDate).toLocaleDateString('vi-VN')}\n\n` +
                         `📝 Ghi chú: ${currentState.releaseNotes}`;
+                } else {
+                    // Nếu phiên bản không đổi, gán cờ hasChanged = true (nếu logic gửi tin nhắn của bạn phụ thuộc vào biến này)
+                    hasChanged = true; 
+                    
+                    // Lấy thời gian kiểm tra hiện tại
+                    const now = new Date();
+                    const checkDate = now.toLocaleDateString('vi-VN');
+                    const checkTime = now.toLocaleTimeString('vi-VN');
+                
+                    notificationMessage = `ℹ️ **Trạng thái Ứng Dụng (Chưa có cập nhật)** ℹ️\n\n` +
+                        `📱 Tên: **${currentState.trackName}**\n` +
+                        `✅ Phiên bản hiện tại: ${currentState.version}\n` +
+                        `📅 Ngày check: ${checkDate}\n` +
+                        `⏰ Giờ check: ${checkTime}`;
                 }
             }
 
