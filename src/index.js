@@ -197,6 +197,7 @@ export default {
                     notificationMessage = `ℹ️ **Trạng thái Ứng Dụng (Chưa có cập nhật)** ℹ️\n\n` +
                         `📱 Tên: **${currentState.trackName}**\n` +
                         `✅ Phiên bản hiện tại: ${currentState.version}\n` +
+                        `📅 Ngày phát hành: ${new Date(appInfo.releaseDate).toLocaleDateString()}\n\n` +
                         `📅 Ngày check: ${checkDate}\n` +
                         `⏰ Giờ check: ${checkTime}`;
                 }
