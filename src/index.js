@@ -20,7 +20,7 @@ export default {
                         await fetch(telegramUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ chat_id: chatId, text: messageText }),
+                            body: JSON.stringify({ chat_id: chatId, text: messageText, parse_mode: 'Markdown' }),
                         });
                     };
 
@@ -33,7 +33,8 @@ export default {
 
                     // Xử lý các lệnh
                     if (text === '/start') {
-                        await sendReply('Xin chào! Tôi là bot theo dõi App Store.\n\nGõ /subscribe để nhận thông báo cập nhật.\nGõ /unsubscribe để huỷ đăng ký.\nGõ /check để chủ động kiểm tra thông tin ứng dụng ngay lập tức.');
+                        // Đã thêm /list vào hướng dẫn
+                        await sendReply('Xin chào! Tôi là bot theo dõi App Store.\n\nGõ /subscribe để nhận thông báo cập nhật.\nGõ /unsubscribe để huỷ đăng ký.\nGõ /check để chủ động kiểm tra thông tin ứng dụng ngay lập tức.\nGõ /list để xem danh sách người đã đăng ký.');
                     } else if (text === '/check') {
                         // Tính năng chủ động kiểm tra
                         const appId = env.APP_ID;
@@ -77,6 +78,15 @@ export default {
                             await sendReply('❌ Bạn đã huỷ đăng ký nhận thông báo thành công!');
                         } else {
                             await sendReply('Bạn chưa đăng ký nhận thông báo.');
+                        }
+                    } else if (text === '/list') {
+                        // ĐOẠN CODE MỚI THÊM VÀO ĐỂ HIỂN THỊ DANH SÁCH
+                        if (subscribers.length === 0) {
+                            await sendReply('Hiện tại chưa có ai đăng ký nhận thông báo.');
+                        } else {
+                            const listMsg = `👥 **Danh sách những người đã đăng ký (${subscribers.length}):**\n\n` +
+                                            subscribers.map((id, index) => `${index + 1}. \`${id}\``).join('\n');
+                            await sendReply(listMsg);
                         }
                     } else {
                         await sendReply(`Lệnh không hợp lệ. Vui lòng chat /start để xem hướng dẫn.`);
@@ -149,7 +159,6 @@ export default {
                         `📅 Ngày phát hành: ${new Date(currentState.releaseDate).toLocaleDateString('vi-VN')}\n\n` +
                         `📝 Ghi chú: ${currentState.releaseNotes}`;
                 } else {
-                    // Nếu phiên bản không đổi, gán cờ hasChanged = true (nếu logic gửi tin nhắn của bạn phụ thuộc vào biến này)
                     hasChanged = true; 
                     
                     // Lấy thời gian kiểm tra hiện tại
