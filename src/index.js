@@ -33,7 +33,6 @@ export default {
 
                     // Xử lý các lệnh
                     if (text === '/start') {
-                        // Đã thêm /list vào hướng dẫn
                         await sendReply('Xin chào! Tôi là bot theo dõi App Store.\n\nGõ /subscribe để nhận thông báo cập nhật.\nGõ /unsubscribe để huỷ đăng ký.\nGõ /check để chủ động kiểm tra thông tin ứng dụng ngay lập tức.\nGõ /list để xem danh sách người đã đăng ký.');
                     } else if (text === '/check') {
                         // Tính năng chủ động kiểm tra
@@ -80,12 +79,41 @@ export default {
                             await sendReply('Bạn chưa đăng ký nhận thông báo.');
                         }
                     } else if (text === '/list') {
-                        // ĐOẠN CODE MỚI THÊM VÀO ĐỂ HIỂN THỊ DANH SÁCH
                         if (subscribers.length === 0) {
                             await sendReply('Hiện tại chưa có ai đăng ký nhận thông báo.');
                         } else {
-                            const listMsg = `👥 **Danh sách những người đã đăng ký (${subscribers.length}):**\n\n` +
-                                            subscribers.map((id, index) => `${index + 1}. \`${id}\``).join('\n');
+                            // Gửi tin nhắn chờ nếu danh sách dài, bot cần thời gian gọi API
+                            await sendReply('⏳ Đang tổng hợp dữ liệu người dùng, vui lòng đợi...'); 
+                            
+                            let listMsg = `👥 **Danh sách những người đã đăng ký (${subscribers.length}):**\n\n`;
+
+                            // Sử dụng Promise.all để gọi API getChat đồng thời cho tất cả ID
+                            const userInfoPromises = subscribers.map(async (id, index) => {
+                                try {
+                                    const getChatUrl = `https://api.telegram.org/bot${botToken}/getChat?chat_id=${id}`;
+                                    const res = await fetch(getChatUrl);
+                                    const chatData = await res.json();
+
+                                    if (chatData.ok) {
+                                        const chat = chatData.result;
+                                        // Lấy tên người dùng (ghép first_name và last_name nếu có)
+                                        const name = chat.first_name + (chat.last_name ? ` ${chat.last_name}` : '');
+                                        // Lấy username nếu có
+                                        const username = chat.username ? ` (@${chat.username})` : '';
+                                        
+                                        return `${index + 1}. **${name}**${username} - \`${id}\``;
+                                    } else {
+                                        return `${index + 1}. *Người dùng không xác định* - \`${id}\``;
+                                    }
+                                } catch (err) {
+                                    return `${index + 1}. *Lỗi truy xuất* - \`${id}\``;
+                                }
+                            });
+
+                            // Đợi tất cả các truy vấn hoàn tất rồi ghép thành tin nhắn hoàn chỉnh
+                            const userLines = await Promise.all(userInfoPromises);
+                            listMsg += userLines.join('\n');
+
                             await sendReply(listMsg);
                         }
                     } else {
